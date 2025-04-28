@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from enum import IntEnum
 
+
 class ControlRegister(BaseModel):
     """
     The electric gripper shall be enabled before controlling.
@@ -72,6 +73,7 @@ class ExecuteControlMovement(BaseModel):
     force: int
     speed: int
     position: int
+
 
 class GSTA(IntEnum):
     RESET_OR_INSPECTION = 0
@@ -154,5 +156,3 @@ class SpeedForce(BaseModel):
 class FaultPosition(BaseModel):
     fault: GripperFaultStatus
     position: int
-
-

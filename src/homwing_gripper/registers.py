@@ -1,9 +1,4 @@
 from enum import IntEnum
-from pydantic import BaseModel
-
-
-class ControlRegisters(IntEnum):
-    """Place Registers Here"""
 
 
 class ControlRegisters(IntEnum):

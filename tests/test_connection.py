@@ -24,12 +24,11 @@ async def main() -> None:
     )
     await client.connect()
     gripper = HomwingGripper(client, 9)
-    #print("", await gripper.read_gripper_status())
-    #print("", await gripper.read_fault_position())
-    #print("", await gripper.read_speed_force())
-    #print("", await gripper.read_voltage_temperature())
-    #print("", await gripper.read_software_version())
-
+    # print("", await gripper.read_gripper_status())
+    # print("", await gripper.read_fault_position())
+    # print("", await gripper.read_speed_force())
+    # print("", await gripper.read_voltage_temperature())
+    # print("", await gripper.read_software_version())
 
     await gripper.clear_control_register()
     await gripper.activate()
@@ -37,7 +36,7 @@ async def main() -> None:
         result = await gripper.read_gripper_status()
         if result.gSTA == GSTA.ACTIVATED:
             break
-        await asyncio.sleep(.1)
+        await asyncio.sleep(0.1)
     await gripper.set_speed_force(255, 20)
     await gripper.move_to_position(0)
     await gripper.wait_for_move()
@@ -52,7 +51,6 @@ async def main() -> None:
         input()
     await gripper.move_to_position(0)
     await gripper.wait_for_move()
-
 
 
 if __name__ == "__main__":
