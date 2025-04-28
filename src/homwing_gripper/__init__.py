@@ -10,6 +10,7 @@ from homwing_gripper.core import (
     FaultPosition,
     ControlRegister,
     GOBJ,
+    GSTA,
 )
 import asyncio
 
@@ -24,7 +25,7 @@ class HomwingGripper:
         return self._address
 
     @address.setter
-    def address(self, value: int) -> None:  # ❗ name must match the property
+    def address(self, value: int) -> None:
         if value > 247:
             raise ValueError("Invalid Address")
         self._address = value
@@ -130,7 +131,6 @@ class HomwingGripper:
         await self._set_speed_force(speed, force)
 
     async def _set_speed_force(self, speed: int, force: int) -> None:
-        print([speed + force << 8])
         await self._client.write_registers(
             ControlRegisters.SPEED_FORCE, [speed + (force << 8)], slave=self._address
         )
@@ -139,6 +139,17 @@ class HomwingGripper:
         await self.set_speed_force(movement.speed, movement.force)
         await self.move_to_position(movement.position)
         await self.execute_move()
+
+    async def stop(self) -> None:
+        await self.write_control_register(
+            ControlRegister(
+                enable=True,
+                mode=False,
+                move_to_targret=False,
+                automatic_inspection=False,
+                automatic_patrol_inspection=False,
+            )
+        )
 
     async def execute_move(self) -> None:
         await self.write_control_register(
@@ -150,3 +161,11 @@ class HomwingGripper:
                 automatic_patrol_inspection=False,
             )
         )
+
+    async def wait_for_activation(self) -> None:
+        async with asyncio.timeout(5):
+            while True:
+                result = await self.read_gripper_status()
+                if result.gSTA == GSTA.ACTIVATED:
+                    break
+                await asyncio.sleep(0.1)
